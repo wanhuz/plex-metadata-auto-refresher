@@ -1,0 +1,11 @@
+plex:
+  url: http://192.x.xx.xx:32400
+  x-token: xxxxyyy
+  library: libraryName
+
+user:
+  folder_to_watch: '/home/user or C:\\Users\\'
+  extension_to_watch:
+    - .ass
+    - .srt
+    - .vtt
