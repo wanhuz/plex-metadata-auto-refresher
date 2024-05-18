@@ -1,0 +1,8 @@
+version: "3"
+services:
+  app:
+    image: wanhuz/plex-metadata-refresher
+    container_name: plex-metadata-refresher
+    restart: unless-stopped
+    volumes:
+      - /path/to/config:/usr/src/app/config

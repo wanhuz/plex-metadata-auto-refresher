@@ -34,6 +34,7 @@ print("Directory to refresh since last run " + str(directory_to_refresh))
 runtime_date.save()
 
 if (directory_to_refresh):
+    print('Retrieving shows from Plex to refresh...')
     items_to_refresh = plex.get_item_from_location(directory_to_refresh)
 
     print('Refreshing shows ' + str(items_to_refresh))
