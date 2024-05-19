@@ -5,4 +5,4 @@ services:
     container_name: plex-metadata-refresher
     restart: unless-stopped
     volumes:
-      - /path/to/config:/usr/src/app/config
+      - /path/to/config:/usr/src/app

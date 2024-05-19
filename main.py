@@ -2,10 +2,15 @@ from module.plex import Plex
 from module.walker import Walker
 from module.last_runtime import Last_runtime as Runtime_Date
 from yaml import safe_load as yaml_safe_load
+import schedule
+from sys import exit
+import time
 
-
-with open('config.yaml', 'r') as file:
-    config = yaml_safe_load(file)
+try:
+    with open('config.yaml', 'r') as file:
+        config = yaml_safe_load(file)
+except IOError:
+    exit('Config.yaml file could not be found. Create yaml file using config_example.yaml')
 
 baseurl = config['plex']['url']
 token = config['plex']['x-token']
@@ -17,28 +22,36 @@ plex = Plex(baseurl, token, src_folder, library)
 plex.authenticate()
 print('Authenticated to Plex')
 
-walker = Walker(src_folder)
 
-runtime_date = Runtime_Date()
-runtime_date.init()
-runtime_date.load()
-last_runtime_date = runtime_date.get()
-print("Last script running is " + str(last_runtime_date))
+def job():
+    walker = Walker(src_folder)
 
-new_modified_directory = walker.get_new_directory(last_runtime_date)
-print("Modified directory since last run " + str(new_modified_directory))
+    runtime_date = Runtime_Date()
+    runtime_date.init()
+    runtime_date.load()
+    last_runtime_date = runtime_date.get()
+    print("Last script running is " + str(last_runtime_date))
 
-directory_to_refresh = walker.get_directory_with_new_subtitle(new_modified_directory, exts, last_runtime_date)
-print("Directory to refresh since last run " + str(directory_to_refresh))
+    new_modified_directory = walker.get_new_directory(last_runtime_date)
+    print("Modified directory since last run " + str(new_modified_directory))
 
-runtime_date.save()
+    directory_to_refresh = walker.get_directory_with_new_subtitle(new_modified_directory, exts, last_runtime_date)
+    print("Directory to refresh since last run " + str(directory_to_refresh))
 
-if (directory_to_refresh):
-    print('Retrieving shows from Plex to refresh...')
-    items_to_refresh = plex.get_item_from_location(directory_to_refresh)
+    runtime_date.save()
 
-    print('Refreshing shows ' + str(items_to_refresh))
-    plex.refresh_items(items_to_refresh)
-    print('Operation complete!')
-else:
-    print('Nothing to refresh')
+    if (directory_to_refresh):
+        print('Retrieving shows from Plex to refresh...')
+        items_to_refresh = plex.get_item_from_location(directory_to_refresh)
+
+        print('Refreshing shows ' + str(items_to_refresh))
+        plex.refresh_items(items_to_refresh)
+        print('Operation complete!')
+    else:
+        print('Nothing to refresh')
+
+schedule.every(1).minute.do(job)
+
+while True:
+    schedule.run_pending()
+    time.sleep(1)
