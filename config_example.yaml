@@ -4,7 +4,7 @@ plex:
   library: libraryName
 
 user:
-  folder_to_watch: '/home/user or C:\\Users\\'
+  folder_to_watch: /home/user # Point to docker internal directory if using docker
   extension_to_watch:
     - .ass
     - .srt

@@ -32,7 +32,7 @@ def job():
     changed_file = snapshot.get_modified_file(new_snapshot)
     
     file_to_refresh = Util.filter_list_by_file_exts(changed_file, exts)
-    print('Detecting file to refresh ' + changed_file)
+    print('Detecting file to refresh ' + str(changed_file))
 
     directory_to_refresh = Util.parse_path_from_list(file_to_refresh)
     print("Directory to refresh since last snapshot " + str(directory_to_refresh))
@@ -49,6 +49,7 @@ def job():
     else:
         print('Nothing to refresh')
 
+job()
 schedule.every(1).minute.do(job)
 
 while True:
