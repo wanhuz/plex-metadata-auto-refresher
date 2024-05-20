@@ -1,6 +1,6 @@
 from module.plex import Plex
-from module.walker import Walker
-from module.last_runtime import Last_runtime as Runtime_Date
+from module.snapshot import Snapshot as DirSnapshot
+from module.util import Util
 from yaml import safe_load as yaml_safe_load
 import schedule
 from sys import exit
@@ -24,23 +24,22 @@ print('Authenticated to Plex')
 
 
 def job():
-    walker = Walker(src_folder)
+    snapshot = DirSnapshot(src_folder)
+    snapshot.init()
+    snapshot.load()
 
-    runtime_date = Runtime_Date()
-    runtime_date.init()
-    runtime_date.load()
-    last_runtime_date = runtime_date.get()
-    print("Last script running is " + str(last_runtime_date))
+    new_snapshot = snapshot.create()
+    changed_file = snapshot.get_modified_file(new_snapshot)
+    
+    file_to_refresh = Util.filter_list_by_file_exts(changed_file, exts)
+    print('Detecting file to refresh ' + changed_file)
 
-    new_modified_directory = walker.get_new_directory(last_runtime_date)
-    print("Modified directory since last run " + str(new_modified_directory))
-
-    directory_to_refresh = walker.get_directory_with_new_subtitle(new_modified_directory, exts, last_runtime_date)
-    print("Directory to refresh since last run " + str(directory_to_refresh))
-
-    runtime_date.save()
+    directory_to_refresh = Util.parse_path_from_list(file_to_refresh)
+    print("Directory to refresh since last snapshot " + str(directory_to_refresh))
 
     if (directory_to_refresh):
+        snapshot.save(snapshot.create())
+
         print('Retrieving shows from Plex to refresh...')
         items_to_refresh = plex.get_item_from_location(directory_to_refresh)
 

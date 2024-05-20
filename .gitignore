@@ -164,5 +164,5 @@ cython_debug/
 
 
 refresh/
-last_runtime.dat
+last_snapshot.dat
 config.yaml
