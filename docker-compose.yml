@@ -6,3 +6,6 @@ services:
     restart: unless-stopped
     volumes:
       - /path/to/config.yaml:/usr/src/app/config.yaml
+      - /path/to/plex/media:/target/directory/in/config
+    environment:
+      - PYTHONUNBUFFERED=1 # Print output to docker logs
