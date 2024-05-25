@@ -38,7 +38,7 @@ def job():
     print("Directory to refresh since last snapshot " + str(directory_to_refresh))
 
     if (directory_to_refresh):
-        snapshot.save(snapshot.create())
+        snapshot.save(new_snapshot)
 
         print('Retrieving shows from Plex to refresh...')
         items_to_refresh = plex.get_item_from_location(directory_to_refresh)
